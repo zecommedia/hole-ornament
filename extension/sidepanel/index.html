@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zecom Product Swap</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Zecom Product Swap</h1>
+      <p class="subtitle" data-i18n="subtitle">Pair 1 product × N listings → batch swap trên Google Flow</p>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="run" data-i18n="tab_run">Chạy</button>
+      <button class="tab" data-tab="upscale" data-i18n="tab_upscale">Upscale</button>
+      <button class="tab" data-tab="video" data-i18n="tab_video">Video</button>
+      <button class="tab" data-tab="trademark" data-i18n="tab_trademark">Trademark</button>
+      <button class="tab" data-tab="queue" data-i18n="tab_queue">Queue <span id="cntQueue" class="count">0</span></button>
+      <button class="tab" data-tab="settings" data-i18n="tab_settings">Settings</button>
+    </nav>
+
+    <!-- ========== TAB: RUN ========== -->
+    <div class="tab-panel active" data-panel="run">
+      <section class="uploads">
+        <div class="zone" id="zoneProduct">
+          <div class="zone-head">
+            <h2><span data-i18n="product_imgs">Ảnh sản phẩm</span> <span class="count" id="cntProduct">0</span></h2>
+            <button type="button" class="link" id="clearProduct" data-i18n="clear_all">Xoá hết</button>
+          </div>
+          <label class="drop" for="fileProduct" id="dropProduct">
+            <span data-i18n="drop_product">Kéo thả hoặc bấm để chọn ảnh sản phẩm</span>
+            <input id="fileProduct" type="file" accept="image/*" multiple hidden />
+          </label>
+          <ul class="thumbs" id="thumbsProduct"></ul>
+        </div>
+
+        <div class="zone" id="zoneListing">
+          <div class="zone-head">
+            <h2><span data-i18n="listing_imgs">Ảnh listing</span> <span class="count" id="cntListing">0</span></h2>
+            <button type="button" class="link" id="clearListing" data-i18n="clear_all">Xoá hết</button>
+          </div>
+          <label class="drop" for="fileListing" id="dropListing">
+            <span data-i18n="drop_listing">Kéo thả hoặc bấm để chọn ảnh listing</span>
+            <input id="fileListing" type="file" accept="image/*" multiple hidden />
+          </label>
+          <ul class="thumbs" id="thumbsListing"></ul>
+        </div>
+      </section>
+
+      <section class="pair-controls">
+        <div class="row">
+          <label class="grow">
+            <span data-i18n="pair_mode">Chế độ ghép cặp</span>
+            <select id="pairMode">
+              <option value="one-to-many" data-i18n="pair_one_to_many">1 product → tất cả listings</option>
+              <option value="zip" data-i18n="pair_zip">Ghép theo thứ tự (product[i] × listing[i])</option>
+            </select>
+          </label>
+        </div>
+        <div class="row align-center">
+          <button id="btnEnqueue" class="primary" data-i18n="enqueue">+ Thêm vào queue</button>
+          <span class="hint" id="pairPreview"></span>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========== TAB: UPSCALE ========== -->
+    <div class="tab-panel" data-panel="upscale">
+      <section class="uploads">
+        <div class="zone" id="zoneUpscale">
+          <div class="zone-head">
+            <h2><span data-i18n="upscale_imgs">Ảnh cần upscale</span> <span class="count" id="cntUpscale">0</span></h2>
+            <button type="button" class="link" id="clearUpscale" data-i18n="clear_all">Xoá hết</button>
+          </div>
+          <label class="drop" for="fileUpscale" id="dropUpscale">
+            <span data-i18n="drop_upscale">Kéo thả hoặc bấm để chọn ảnh upscale</span>
+            <input id="fileUpscale" type="file" accept="image/*" multiple hidden />
+          </label>
+          <ul class="thumbs" id="thumbsUpscale"></ul>
+        </div>
+      </section>
+
+      <section class="pair-controls">
+        <label>
+          <span data-i18n="upscale_prompt_label">Prompt upscale</span>
+          <span class="desc" data-i18n="upscale_prompt_desc">Prompt dùng cho tất cả ảnh trong session</span>
+          <textarea id="upscalePrompt" rows="3"></textarea>
+        </label>
+        <div class="row align-center">
+          <button id="btnEnqueueUpscale" class="primary" data-i18n="enqueue_upscale">+ Thêm session upscale</button>
+          <span class="hint" id="upscalePreview"></span>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========== TAB: VIDEO ========== -->
+    <div class="tab-panel" data-panel="video">
+      <section class="uploads">
+        <div class="video-slots">
+          <div class="slot" data-slot="vidProduct">
+            <h3 data-i18n="vid_product">Sản phẩm chính</h3>
+            <label class="drop drop-mini" for="fileVidProduct">
+              <span data-i18n="drop_one">Chọn 1 ảnh</span>
+              <input id="fileVidProduct" type="file" accept="image/*" hidden />
+            </label>
+            <div class="single-thumb" id="thumbVidProduct"></div>
+          </div>
+          <div class="slot" data-slot="vidGiver">
+            <h3 data-i18n="vid_giver">Người tặng</h3>
+            <label class="drop drop-mini" for="fileVidGiver">
+              <span data-i18n="drop_one">Chọn 1 ảnh</span>
+              <input id="fileVidGiver" type="file" accept="image/*" hidden />
+            </label>
+            <div class="single-thumb" id="thumbVidGiver"></div>
+          </div>
+          <div class="slot" data-slot="vidReceiver">
+            <h3 data-i18n="vid_receiver">Người nhận</h3>
+            <label class="drop drop-mini" for="fileVidReceiver">
+              <span data-i18n="drop_one">Chọn 1 ảnh</span>
+              <input id="fileVidReceiver" type="file" accept="image/*" hidden />
+            </label>
+            <div class="single-thumb" id="thumbVidReceiver"></div>
+          </div>
+        </div>
+
+        <div class="zone" id="zoneVidExtras">
+          <div class="zone-head">
+            <h2><span data-i18n="vid_extras">Sản phẩm phụ (mỗi ảnh chỉ chạy Scene 1)</span> <span class="count" id="cntVidExtras">0</span></h2>
+            <button type="button" class="link" id="clearVidExtras" data-i18n="clear_all">Xoá hết</button>
+          </div>
+          <label class="drop" for="fileVidExtras" id="dropVidExtras">
+            <span data-i18n="drop_vid_extras">Kéo thả hoặc bấm để chọn sản phẩm phụ</span>
+            <input id="fileVidExtras" type="file" accept="image/*" multiple hidden />
+          </label>
+          <ul class="thumbs" id="thumbsVidExtras"></ul>
+        </div>
+      </section>
+
+      <section class="pair-controls">
+        <div class="row">
+          <label class="grow">
+            <span data-i18n="vid_model">Model</span>
+            <select id="videoModel">
+              <option value="omni-flash">Omni Flash</option>
+              <option value="veo-3-fast">Veo 3 Fast</option>
+            </select>
+          </label>
+          <label class="narrow">
+            <span data-i18n="vid_outputs">Outputs</span>
+            <select id="videoOutputs">
+              <option value="1">x1</option>
+              <option value="2">x2</option>
+              <option value="3">x3</option>
+              <option value="4">x4</option>
+            </select>
+          </label>
+          <label class="narrow">
+            <span data-i18n="vid_duration">Duration</span>
+            <select id="videoDuration">
+              <option value="4">4s</option>
+              <option value="6">6s</option>
+              <option value="8">8s</option>
+              <option value="10">10s</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          <span data-i18n="vid_script_label">Kịch bản (full SCENE 1, 2, …, Style:, Audio:)</span>
+          <span class="desc" data-i18n="vid_script_desc">4s/6s/8s: mỗi SCENE chạy 1 clip riêng. 10s: chạy 2 lần, mỗi lần gộp 2 scene.</span>
+          <textarea id="videoScript" rows="10" placeholder="SCENE 1 (0-4s): ...&#10;SCENE 2 (4-8s): ...&#10;&#10;Style: ..."></textarea>
+        </label>
+        <div class="row align-center">
+          <button id="btnEnqueueVideo" class="primary" data-i18n="enqueue_video">+ Thêm session video</button>
+          <span class="hint" id="videoPreview"></span>
+        </div>
+        <div class="hint">
+          <small data-i18n="vid_fixed">Cố định: 16:9 · video luôn chạy trên Flow</small>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========== TAB: TRADEMARK ========== -->
+    <div class="tab-panel" data-panel="trademark">
+      <section class="uploads">
+        <div class="zone" id="zoneTrademark">
+          <div class="zone-head">
+            <h2><span data-i18n="trademark_imgs">Ảnh cần check trademark</span> <span class="count" id="cntTrademark">0</span></h2>
+            <button type="button" class="link" id="clearTrademark" data-i18n="clear_all">Xoá hết</button>
+          </div>
+          <label class="drop" for="fileTrademark" id="dropTrademark">
+            <span data-i18n="drop_trademark">Kéo thả hoặc bấm để chọn ảnh check trademark</span>
+            <input id="fileTrademark" type="file" accept="image/*" multiple hidden />
+          </label>
+          <ul class="thumbs" id="thumbsTrademark"></ul>
+        </div>
+      </section>
+
+      <section class="pair-controls">
+        <div class="row align-center">
+          <button id="btnEnqueueTrademark" class="primary" data-i18n="enqueue_trademark">+ Thêm session trademark</button>
+          <span class="hint" id="trademarkPreview"></span>
+        </div>
+        <div class="hint">
+          <small data-i18n="trademark_fixed">Cố định: Gemini · prompt "Check Trademark cho tôi các thiết kế này"</small>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========== TAB: QUEUE ========== -->
+    <div class="tab-panel" data-panel="queue">
+      <section class="queue">
+        <div class="queue-head">
+          <h2><span data-i18n="queue_title">Queue</span></h2>
+          <div class="queue-actions">
+            <button id="btnStart" class="primary" data-i18n="start">▶ Start</button>
+            <button id="btnStop" data-i18n="stop">⏹ Stop</button>
+            <button id="btnClearDone" class="link" data-i18n="clear_done">Xoá job xong</button>
+          </div>
+        </div>
+        <ul id="queueList" class="queue-list"></ul>
+      </section>
+    </div>
+
+    <!-- ========== TAB: SETTINGS ========== -->
+    <div class="tab-panel" data-panel="settings">
+      <!-- Generation -->
+      <section class="settings-group">
+        <h2 data-i18n="grp_generation">Generation</h2>
+
+        <label>
+          <span data-i18n="image_engine">Engine gen ảnh</span>
+          <span class="desc" data-i18n="image_engine_desc">Áp dụng cho Swap + Imgbatch (Upscale luôn dùng Flow, Video luôn dùng Flow)</span>
+          <select id="imageEngine">
+            <option value="flow" data-i18n="engine_flow">Google Flow (Nano Banana)</option>
+            <option value="chatgpt" data-i18n="engine_chatgpt">ChatGPT</option>
+          </select>
+        </label>
+
+        <label>
+          <span data-i18n="prompt_label">Prompt</span>
+          <span class="desc" data-i18n="prompt_desc">Có thể dùng biến: {product}, {listing}</span>
+          <textarea id="prompt" rows="3"></textarea>
+        </label>
+
+        <div class="row">
+          <label class="grow">
+            <span data-i18n="aspect_ratio">Tỉ lệ khung</span>
+            <span class="desc" data-i18n="aspect_desc">Áp dụng khi Flow hỗ trợ (1:1, 16:9, 9:16)</span>
+            <select id="aspectRatio">
+              <option value="auto" data-i18n="aspect_auto">Tự động (giữ nguyên)</option>
+              <option value="1:1">1:1 (Square)</option>
+              <option value="16:9">16:9 (Landscape)</option>
+              <option value="9:16">9:16 (Portrait)</option>
+              <option value="4:3">4:3</option>
+              <option value="3:4">3:4</option>
+            </select>
+          </label>
+          <label class="narrow">
+            <span data-i18n="outputs_per_prompt">Output/prompt</span>
+            <span class="desc" data-i18n="outputs_desc">Số ảnh mỗi prompt (1–4)</span>
+            <input id="outputsPerPrompt" type="number" min="1" max="4" value="1" />
+          </label>
+        </div>
+
+        <div class="row">
+          <label class="grow">
+            <span data-i18n="image_model">Image model</span>
+            <span class="desc" data-i18n="image_model_desc">Model dùng cho Nano Banana</span>
+            <select id="imageModel">
+              <option value="auto" data-i18n="model_auto">Tự động (mặc định Flow)</option>
+              <option value="nano-banana">Nano Banana</option>
+              <option value="nano-banana-pro">Nano Banana Pro</option>
+              <option value="imagen-3">Imagen 3</option>
+              <option value="imagen-4">Imagen 4</option>
+            </select>
+          </label>
+          <label class="grow">
+            <span data-i18n="download_quality">Chất lượng tải</span>
+            <span class="desc" data-i18n="download_quality_desc">Chọn chất lượng ảnh khi auto-download</span>
+            <select id="downloadQuality">
+              <option value="original" data-i18n="quality_original">Bản gốc</option>
+              <option value="highest" data-i18n="quality_highest">Cao nhất có sẵn</option>
+              <option value="none" data-i18n="quality_none">Không download</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <!-- Batch / Concurrency -->
+      <section class="settings-group">
+        <h2 data-i18n="grp_batch">Batch & Concurrency</h2>
+
+        <div class="row">
+          <label class="narrow">
+            <span data-i18n="concurrent">Song song</span>
+            <span class="desc" data-i18n="concurrent_desc">Số session chạy song song (mỗi session = 1 project riêng)</span>
+            <input id="concurrency" type="number" min="1" max="10" value="2" />
+          </label>
+          <label class="grow">
+            <span data-i18n="wait_min">Wait min (s)</span>
+            <span class="desc" data-i18n="wait_min_desc">Delay tối thiểu trước prompt kế</span>
+            <input id="waitMin" type="number" min="0" max="120" step="0.5" value="1" />
+          </label>
+          <label class="grow">
+            <span data-i18n="wait_max">Wait max (s)</span>
+            <span class="desc" data-i18n="wait_max_desc">Delay tối đa (random trong khoảng)</span>
+            <input id="waitMax" type="number" min="0" max="180" step="0.5" value="3" />
+          </label>
+        </div>
+
+        <label class="inline">
+          <input id="autoRetry" type="checkbox" />
+          <span data-i18n="auto_retry">Tự động retry khi lỗi</span>
+        </label>
+        <label class="narrow">
+          <span data-i18n="max_retries">Số lần retry tối đa</span>
+          <input id="maxRetries" type="number" min="0" max="5" value="2" />
+        </label>
+
+        <label class="inline">
+          <input id="closeTabAfter" type="checkbox" checked />
+          <span data-i18n="close_tab">Đóng tab sau khi xong (song song > 1)</span>
+        </label>
+        <label class="inline">
+          <input id="runInWindow" type="checkbox" />
+          <span data-i18n="run_in_window">Mở mỗi session trong cửa sổ riêng (chống throttle khi nhiều session)</span>
+        </label>
+      </section>
+
+      <!-- Downloads -->
+      <section class="settings-group">
+        <h2 data-i18n="grp_downloads">Downloads</h2>
+
+        <div class="row">
+          <label class="grow">
+            <span data-i18n="folder">Folder lưu</span>
+            <span class="desc" data-i18n="folder_desc">Subfolder cho file download (vd: zecom-swap)</span>
+            <input id="folder" type="text" placeholder="zecom-swap" />
+          </label>
+          <label class="grow">
+            <span data-i18n="prefix">Prefix tên file</span>
+            <span class="desc" data-i18n="prefix_desc">Tiền tố thêm vào trước tên file</span>
+            <input id="prefix" type="text" placeholder="(trống)" />
+          </label>
+        </div>
+
+        <label>
+          <span data-i18n="filename_template">Mẫu tên file</span>
+          <span class="desc" data-i18n="filename_template_desc">Biến: {idx} {product} {listing} {n} {ext}</span>
+          <input id="filenameTemplate" type="text" value="{idx}_{product}__{listing}_{n}.{ext}" />
+        </label>
+
+        <label class="inline">
+          <input id="autoRename" type="checkbox" checked />
+          <span data-i18n="auto_rename">Tự đổi tên file theo cặp</span>
+        </label>
+      </section>
+
+      <!-- Anti-detect -->
+      <section class="settings-group">
+        <h2 data-i18n="grp_antidetect">Anti-detect</h2>
+
+        <label class="inline">
+          <input id="clearCookies" type="checkbox" />
+          <span data-i18n="clear_cookies">Xoá cookies labs.google trước khi chạy</span>
+        </label>
+        <label class="inline">
+          <input id="disableCache" type="checkbox" checked />
+          <span data-i18n="disable_cache">Disable cache trên tab</span>
+        </label>
+        <label class="inline">
+          <input id="cdpInput" type="checkbox" checked />
+          <span data-i18n="cdp_input">Dùng CDP cho click/text (giảm bị detect bot)</span>
+        </label>
+      </section>
+
+      <!-- General -->
+      <section class="settings-group">
+        <h2 data-i18n="grp_general">Tổng quát</h2>
+
+        <label class="grow">
+          <span data-i18n="language">Ngôn ngữ</span>
+          <select id="language">
+            <option value="vi">Tiếng Việt</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+
+        <label>
+          <span data-i18n="default_mode">Default mode khi mở session</span>
+          <select id="defaultMode">
+            <option value="image-to-image" data-i18n="mode_i2i">Image to Image (swap product)</option>
+            <option value="text-to-image" data-i18n="mode_t2i">Text to Image</option>
+          </select>
+        </label>
+
+        <label class="narrow">
+          <span data-i18n="zoom">Zoom tab (%)</span>
+          <input id="zoomLevel" type="number" min="50" max="200" step="5" value="100" />
+        </label>
+      </section>
+
+      <div class="settings-actions">
+        <button id="btnSaveSettings" class="primary" data-i18n="save_settings">💾 Lưu cài đặt</button>
+        <button id="btnResetSettings" data-i18n="reset_defaults">↺ Reset mặc định</button>
+        <button id="btnExportSettings" class="link" data-i18n="export">Export JSON</button>
+        <button id="btnImportSettings" class="link" data-i18n="import">Import JSON</button>
+        <input id="importFile" type="file" accept="application/json,.json" hidden />
+      </div>
+    </div>
+
+    <footer>
+      <small id="statusLine">Idle.</small>
+    </footer>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>

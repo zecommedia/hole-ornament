@@ -1,0 +1,16 @@
+# RMBG-2.0 FastAPI server dependencies.
+# NOTE: install torch/torchvision separately for your platform/CUDA first, e.g.
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+# (or the CPU build). Then: pip install -r requirements.txt
+fastapi
+uvicorn[standard]
+pydantic
+numpy
+pillow
+scipy
+transformers
+torch
+torchvision
+# Required by briaai/RMBG-2.0's remote modeling code (BiRefNet backbone).
+kornia
+timm

@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "api",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server.js"],
+      "port": 4500
+    },
+    {
+      "name": "ui",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite"],
+      "port": 5173
+    },
+    {
+      "name": "rmbg",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["py-rmbg/rmbg_server.py"],
+      "port": 5001
+    }
+  ]
+}

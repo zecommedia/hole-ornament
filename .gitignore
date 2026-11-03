@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+
+# Secrets
+.env
+.env.local
+
+# Runtime job artifacts + staged uploads (24h TTL)
+data/
+
+# Build output (run `npm run build`)
+ui/dist/
+
+# Test scratch
+test/_out/
+
+# Python (RMBG server) — venv + model weights download locally, never commit
+py-rmbg/__pycache__/
+py-rmbg/.venv/
+py-rmbg/venv/
+*.pt
+*.pth
+*.onnx
+*.safetensors
+
+# Logs / OS
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Model cache / pip temp / archives — tải lại được, quá nặng cho git
+.hf-cache/
+py-rmbg/.piptmp/
+*.zip
+
+# Ảnh mẫu / output thử nghiệm thủ công (không phải mã nguồn)
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+ornament-out/
+RMBG/**/*.png
+RMBG/**/*.jpg
+RMBG/**/*.jpeg
+RMBG/**/*.webp
+
+# Dump request debug (chứa URL đã ký)
+HTTP_Request.json
+
+# Backup
+*.bak

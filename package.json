@@ -1,0 +1,35 @@
+{
+  "name": "hole-ornament",
+  "version": "1.0.0",
+  "description": "Hole / die-cut acrylic ornament print-file builder — drop a listing mockup, get the manufacturing print file (extract design+acrylic via v98 nano-banana, RMBG, compose CUT+FRONT with the hanging hole).",
+  "type": "module",
+  "license": "UNLICENSED",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "build": "vite build",
+    "dev": "concurrently -k -n api,ui -c blue,magenta \"node server.js\" \"vite\"",
+    "test": "node test/compose-test.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
+    "@fontsource-variable/space-grotesk": "^5.2.10",
+    "@gsap/react": "^2.1.2",
+    "@phosphor-icons/react": "^2.1.10",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "gsap": "^3.15.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sharp": "^0.33.5",
+    "undici": "^7.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.0",
+    "concurrently": "^9.1.0",
+    "vite": "^6.0.7"
+  }
+}

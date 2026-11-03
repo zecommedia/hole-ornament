@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Project-O Gemini Bridge — Options</title>
+  <style>
+    body { font: 14px/1.5 system-ui, sans-serif; max-width: 460px; margin: 32px auto; padding: 0 16px; color: #222; }
+    h1 { font-size: 18px; }
+    label { display: block; margin: 16px 0 4px; font-weight: 600; }
+    input[type=text], input[type=password] { width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    .row { display: flex; align-items: center; gap: 8px; margin-top: 16px; }
+    button { margin-top: 20px; padding: 9px 16px; border: 0; border-radius: 6px; background: #ff5b2e; color: #fff; font-weight: 600; cursor: pointer; }
+    .hint { color: #666; font-size: 12px; margin-top: 4px; }
+    #status { margin-left: 12px; color: #2a8f4e; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>Project-O Gemini Bridge</h1>
+  <p class="hint">Extension polls the bridge, runs each job on Gemini Ultra, and posts the result back. Keep a Gemini tab open and logged in.</p>
+
+  <label>Bridge base URL</label>
+  <input type="text" id="base" placeholder="http://localhost:4500" />
+  <div class="hint">Origin serving the Project-O app. Local: <code>http://localhost:4500</code>. Tunnel: <code>https://pj-oh.auto-agents.org</code></div>
+
+  <label>Bridge token (optional)</label>
+  <input type="password" id="token" placeholder="chỉ điền nếu server đặt BRIDGE_TOKEN" />
+  <div class="hint">Must match <code>BRIDGE_TOKEN</code> in the server's .env (leave empty if not set).</div>
+
+  <div class="row">
+    <input type="checkbox" id="enabled" />
+    <label for="enabled" style="margin:0;font-weight:600;">Bật polling (chạy job)</label>
+  </div>
+
+  <button id="save">Lưu</button><span id="status"></span>
+  <script src="options.js"></script>
+</body>
+</html>

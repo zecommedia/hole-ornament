@@ -1,0 +1,76 @@
+{
+  "manifest_version": 3,
+  "name": "Project-O Flow Bridge",
+  "version": "1.0.0",
+  "description": "Polls the Project-O ornament bridge and runs each job on Google Flow (Nano Banana): upload image + prompt + generate + return the result.",
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "js": ["content.js"],
+      "matches": ["*://labs.google/*"],
+      "run_at": "document_end",
+      "all_frames": false
+    },
+    {
+      "js": ["gemini.js"],
+      "matches": ["https://gemini.google.com/*"],
+      "run_at": "document_end",
+      "all_frames": false
+    },
+    {
+      "js": ["chatgpt.js"],
+      "matches": ["https://chatgpt.com/*", "https://chat.openai.com/*"],
+      "run_at": "document_end",
+      "all_frames": false
+    }
+  ],
+  "host_permissions": [
+    "*://labs.google/*",
+    "https://gemini.google.com/*",
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://*.googleusercontent.com/*",
+    "https://storage.googleapis.com/*",
+    "https://*.google.com/*",
+    "https://flow-content.google/*",
+    "https://*.flow-content.google/*",
+    "http://localhost:4500/*",
+    "http://127.0.0.1:4500/*",
+    "https://pj-oh.auto-agents.org/*"
+  ],
+  "permissions": [
+    "storage",
+    "tabs",
+    "sidePanel",
+    "activeTab",
+    "downloads",
+    "debugger",
+    "scripting",
+    "alarms"
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "side_panel": {
+    "default_path": "sidepanel/index.html"
+  },
+  "action": {
+    "default_title": "Project-O Flow Bridge"
+  },
+  "icons": {
+    "16": "icons/icon128.png",
+    "48": "icons/icon128.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "matches": ["*://labs.google/*"],
+      "resources": ["content.js"],
+      "use_dynamic_url": false
+    }
+  ]
+}
